@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.py[cod]
 *$py.class
@@ -15,3 +16,22 @@ static/pdf/*.pdf
 .agent/
 .gemini/
 .env
+=======
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+static/pdf/*.pdf
+*.db
+*.sqlite3
+.DS_Store
+.agent/
+.gemini/
+.env
+>>>>>>> 17b00868cc35eb8e52b0939489ee32061fe580b1
