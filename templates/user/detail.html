@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{{ p.judul }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('user_home') }}">Beranda</a></li>
+                <li class="breadcrumb-item active">{{ p.judul }}</li>
+            </ol>
+        </nav>
+
+        <div class="card glass-card shadow-sm p-4 border-0 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="badge bg-primary px-3 py-2">{{ p.kategori }}</span>
+                <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Dipublikasikan: {{
+                    p.tanggal.strftime('%d %b %Y') }}</small>
+            </div>
+
+            <h1 class="fw-bold text-primary mb-3">{{ p.judul }}</h1>
+            <p class="lead text-muted mb-5">{{ p.deskripsi }}</p>
+
+            <hr>
+
+            {% if p.link_video %}
+            <div class="mt-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="fas fa-video me-2 text-danger"></i>Video Terkait</h4>
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm">
+                    {% if 'youtube.com/watch?v=' in p.link_video %}
+                    <iframe src="https://www.youtube.com/embed/{{ p.link_video.split('v=')[1].split('&')[0] }}"
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+                    {% elif 'youtu.be/' in p.link_video %}
+                    <iframe src="https://www.youtube.com/embed/{{ p.link_video.split('youtu.be/')[1].split('?')[0] }}"
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center border rounded-4">
+                        <div class="text-center">
+                            <i class="fas fa-external-link-alt fa-3x text-muted mb-3"></i>
+                            <p class="mb-0 text-muted">Akses video eksternal di:</p>
+                            <a href="{{ p.link_video }}" target="_blank" class="fw-bold">{{ p.link_video }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <h4 class="fw-bold mb-3"><i class="fas fa-file-lines me-2"></i>Script Podcast</h4>
+                <div class="p-4 bg-light rounded-4 border shadow-inner"
+                    style="white-space: pre-wrap; line-height: 1.8; max-height: 600px; overflow-y: auto;">
+                    {{ p.script_text }}
+                </div>
+            </div>
+
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+            <div class="mt-5 d-grid">
+                <a href="{{ url_for('download_pdf', filename=p.file_pdf) }}"
+                    class="btn btn-success btn-lg fw-bold shadow">
+                    <i class="fas fa-file-pdf me-2"></i> Unduh Script (PDF)
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-md-4">
+        <div class="card glass-card shadow-sm border-0 mb-4 overflow-hidden">
+            <div class="bg-primary p-3 text-white text-center">
+                <h5 class="mb-0 fw-bold">Informasi Narasumber</h5>
+            </div>
+            <div class="card-body p-4 text-center">
+                <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
+                    style="width: 100px; height: 100px;">
+                    <i class="fas fa-user-tie fa-4x text-primary"></i>
+                </div>
+                <h5 class="fw-bold mb-1">{{ p.narasumber_nama }}</h5>
+                <p class="text-primary small fw-bold mb-3">{{ p.narasumber_deskripsi }}</p>
+                <div class="text-start bg-light p-3 rounded-3 small">
+                    <!-- Info detail narasumber disederhanakan -->
+                    <p class="mb-0 text-center text-muted">Informasi Narasumber</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning border-0 shadow-sm">
+            <div class="d-flex">
+                <div class="me-3">
+                    <i class="fas fa-circle-info fa-2x"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-1">Butuh Bantuan?</h6>
+                    <small>Hubungi admin desa jika terdapat kendala dalam mengakses file PDF atau informasi digital
+                        lainnya.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

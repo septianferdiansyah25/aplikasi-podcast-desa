@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan Timeline Produksi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .report-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    .table th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        color: #8898aa;
+        background-color: #f8f9fe;
+        border-top: none;
+    }
+
+    .date-badge {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 8px;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .status-pill {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+    @media print {
+
+        .navbar,
+        .btn,
+        .print-hide {
+            display: none !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .report-card {
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="fw-bold mb-0 text-primary">Laporan Produksi</h2>
+        <p class="text-muted">Riwayat timeline setiap tahapan konten podcast</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <!-- Global print removed as requested: reports are per-item PDF -->
+    </div>
+</div>
+
+<!-- Filter & Search Bar -->
+<div class="row mb-4 print-hide">
+    <div class="col-md-12">
+        <div class="card report-card p-3 border-0">
+            <form action="{{ url_for('admin_report') }}" method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i
+                                class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control bg-light border-start-0 ps-0"
+                            placeholder="Cari judul podcast..." value="{{ q }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select bg-light border-0">
+                        <option value="">Semua Status</option>
+                        <option value="plan" {% if current_status=='plan' %}selected{% endif %}>Plan</option>
+                        <option value="produksi" {% if current_status=='produksi' %}selected{% endif %}>Produksi
+                        </option>
+                        <option value="editing" {% if current_status=='editing' %}selected{% endif %}>Editing</option>
+                        <option value="publish" {% if current_status=='publish' %}selected{% endif %}>Publish</option>
+                        <option value="plan ditolak" {% if current_status=='plan ditolak' %}selected{% endif %}>Ditolak
+                        </option>
+                        <option value="dikembalikan" {% if current_status=='dikembalikan' %}selected{% endif %}>
+                            Dikembalikan</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card report-card overflow-hidden">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Judul & Kategori</th>
+                        <th>Status</th>
+                        <th class="text-center">Timeline Plan</th>
+                        <th class="text-center">Timeline Produksi</th>
+                        <th class="text-center">Timeline Editing</th>
+                        <th class="text-center">Timeline Publish</th>
+                        <th>Keterangan</th>
+                        <th class="text-center pe-4">Cetak PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in podcasts %}
+                    <tr>
+                        <td class="ps-4" style="max-width: 250px;">
+                            <div class="fw-bold text-dark">{{ p.judul }}</div>
+                            <span class="badge bg-light text-primary border">{{ p.kategori }}</span>
+                        </td>
+                        <td>
+                            {% if p.status == 'publish' %}
+                            <span class="status-pill bg-success text-white">Published</span>
+                            {% elif p.status == 'plan' %}
+                            <span class="status-pill bg-info text-white">Plan</span>
+                            {% elif p.status == 'produksi' %}
+                            <span class="status-pill text-white" style="background-color: #6610f2;">Produksi</span>
+                            {% elif p.status == 'editing' %}
+                            <span class="status-pill bg-warning text-dark">Editing</span>
+                            {% elif p.status == 'plan ditolak' %}
+                            <span class="status-pill bg-danger text-white">Ditolak</span>
+                            {% elif p.status == 'dikembalikan' %}
+                            <span class="status-pill bg-secondary text-white">Dikembalikan</span>
+                            {% else %}
+                            <span class="status-pill bg-light text-dark border">{{ p.status|title }}</span>
+                            {% endif %}
+
+                            {% if p.jumlah_revisi > 0 %}
+                            <div class="mt-1">
+                                <span class="badge bg-light text-danger border border-danger-subtle"
+                                    style="font-size: 0.65rem;">
+                                    Revisi ke-{{ p.jumlah_revisi }}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if p.tanggal_plan %}
+                            <span class="date-badge bg-info-subtle text-info border border-info-subtle">
+                                {{ p.tanggal_plan.strftime('%d/%m/%Y') }}
+                            </span>
+                            {% else %}<span class="text-muted small">-</span>{% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if p.tanggal_produksi %}
+                            <span class="date-badge bg-primary-subtle text-primary border border-primary-subtle">
+                                {{ p.tanggal_produksi.strftime('%d/%m/%Y') }}
+                            </span>
+                            {% else %}<span class="text-muted small">-</span>{% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if p.tanggal_editing %}
+                            <span class="date-badge bg-warning-subtle text-warning border border-warning-subtle">
+                                {{ p.tanggal_editing.strftime('%d/%m/%Y') }}
+                            </span>
+                            {% else %}<span class="text-muted small">-</span>{% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if p.tanggal_publish %}
+                            <span class="date-badge bg-success-subtle text-success border border-success-subtle">
+                                {{ p.tanggal_publish.strftime('%d/%m/%Y') }}
+                            </span>
+                            {% else %}<span class="text-muted small">-</span>{% endif %}
+                        </td>
+                        <td style="max-width: 200px;">
+                            {% if p.catatan %}
+                            <small class="text-danger fw-bold d-block">
+                                <i class="fas fa-comment-dots me-1"></i> {{ p.catatan }}
+                            </small>
+                            {% else %}
+                            <small class="text-muted italic">Tidak ada catatan</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-4">
+                            <a href="{{ url_for('report_pdf', id=p.id) }}"
+                                class="btn btn-sm btn-danger rounded-pill shadow-sm" target="_blank">
+                                <i class="fas fa-file-pdf me-1"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-state-2130362-1800926.png"
+                                style="width: 150px; opacity: 0.5;">
+                            <p class="text-muted mt-3">Belum ada data produksi untuk dilaporkan.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+static/pdf/*.pdf
+*.db
+*.sqlite3
+.DS_Store
+.agent/
+.gemini/
+.env

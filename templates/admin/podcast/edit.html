@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Podcast{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card glass-card shadow-lg p-4 border-0">
+            <h2 class="fw-bold mb-4 text-center text-primary"><i class="fas fa-edit me-2"></i>Edit Podcast</h2>
+            <hr>
+
+            <form action="{{ url_for('edit_podcast', id=p.id) }}" method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Judul Podcast</label>
+                        <input type="text" name="judul" class="form-control form-control-lg" value="{{ p.judul }}"
+                            required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Kategori</label>
+                        <select name="kategori" class="form-select form-select-lg">
+                            <option value="Berita Desa" {% if p.kategori=='Berita Desa' %}selected{% endif %}>Berita
+                                Desa</option>
+                            <option value="Sosialisasi" {% if p.kategori=='Sosialisasi' %}selected{% endif %}>
+                                Sosialisasi</option>
+                            <option value="Inspirasi" {% if p.kategori=='Inspirasi' %}selected{% endif %}>Inspirasi
+                            </option>
+                            <option value="Budaya" {% if p.kategori=='Budaya' %}selected{% endif %}>Budaya</option>
+                            <option value="Ekonomi" {% if p.kategori=='Ekonomi' %}selected{% endif %}>Ekonomi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nama Narasumber</label>
+                        <input type="text" name="narasumber_nama" class="form-control" value="{{ p.narasumber_nama }}"
+                            required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Info Narasumber (Jabatan/Instansi)</label>
+                        <input type="text" name="narasumber_deskripsi" class="form-control"
+                            value="{{ p.narasumber_deskripsi }}">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tanggal</label>
+                        <input type="date" name="tanggal" class="form-control"
+                            value="{{ p.tanggal.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Status Publikasi</label>
+                        <select name="status" class="form-select">
+                            <option value="plan" {% if p.status=='plan' %}selected{% endif %}>Tahap Plan</option>
+                            <option value="produksi" {% if p.status=='produksi' %}selected{% endif %}>Tahap Produksi
+                            </option>
+                            <option value="editing" {% if p.status=='editing' %}selected{% endif %}>Tahap Editing
+                            </option>
+                            <option value="publish" {% if p.status=='publish' %}selected{% endif %}>Publish</option>
+                            <option value="plan ditolak" {% if p.status=='plan ditolak' %}selected{% endif %}>Plan
+                                Ditolak</option>
+                            <option value="dikembalikan" {% if p.status=='dikembalikan' %}selected{% endif %}>
+                                Dikembalikan</option>
+                            <option value="draft" {% if p.status=='draft' %}selected{% endif %}>Draft</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Link Video (YouTube/Lainnya)</label>
+                        <input type="url" name="link_video" class="form-control" value="{{ p.link_video or '' }}"
+                            placeholder="Contoh: https://www.youtube.com/watch?v=...">
+                        <small class="text-muted">Opsional. Jika diisi, video akan muncul di halaman detail.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Catatan Revisi / Alasan Ditolak</label>
+                    <textarea name="catatan" class="form-control" rows="2"
+                        placeholder="Berikan catatan jika podcast ditolak atau butuh revisi...">{{ p.catatan if p.catatan else '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Deskripsi Singkat</label>
+                    <textarea name="deskripsi" class="form-control" rows="2">{{ p.deskripsi }}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Script Podcast</label>
+                    <div class="p-2 bg-light rounded border">
+                        <textarea name="script_text" class="form-control" rows="12"
+                            required>{{ p.script_text }}</textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ url_for('admin_podcast') }}" class="btn btn-outline-secondary px-4"><i
+                            class="fas fa-arrow-left me-1"></i> Batal</a>
+                    <button type="submit" class="btn btn-success px-5 fw-bold">Simpan Perubahan <i
+                            class="fas fa-save ms-1"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

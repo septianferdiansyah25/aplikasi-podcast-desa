@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola User{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold"><i class="fas fa-users-cog me-2"></i>Daftar Pengguna</h2>
+    <p class="text-muted">Daftar akun yang terdaftar di aplikasi Podcast Desa</p>
+</div>
+
+<div class="card glass-card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="ps-4">No</th>
+                        <th>Nama Pengguna</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="text-center pe-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in list_user %}
+                    <tr>
+                        <td class="ps-4">{{ loop.index }}</td>
+                        <td>
+                            <div class="fw-bold">{{ user.nama }}</div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                            <span class="badge bg-dark">ADMIN</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Masyarakat (User)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-4">
+                            <span class="text-success"><i class="fas fa-check-circle me-1"></i> Aktif</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

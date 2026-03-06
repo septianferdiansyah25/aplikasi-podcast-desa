@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Buat Podcast Baru{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card glass-card shadow-lg p-4 border-0">
+            <h2 class="fw-bold mb-4 text-center text-primary"><i class="fas fa-pencil-alt me-2"></i>Produksi Podcast
+                Baru</h2>
+            <hr>
+
+            <form action="{{ url_for('add_podcast') }}" method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Judul Podcast</label>
+                        <input type="text" name="judul" class="form-control form-control-lg"
+                            placeholder="Masukkan judul yang menarik..." required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Kategori</label>
+                        <select name="kategori" class="form-select form-select-lg">
+                            <option value="Berita Desa">Berita Desa</option>
+                            <option value="Sosialisasi">Sosialisasi</option>
+                            <option value="Inspirasi">Inspirasi</option>
+                            <option value="Budaya">Budaya</option>
+                            <option value="Ekonomi">Ekonomi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nama Narasumber</label>
+                        <input type="text" name="narasumber_nama" class="form-control"
+                            placeholder="Nama lengkap narasumber..." required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Info Narasumber (Jabatan/Instansi)</label>
+                        <input type="text" name="narasumber_deskripsi" class="form-control"
+                            placeholder="Contoh: Kepala Desa Suka Maju">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tanggal</label>
+                        <input type="date" name="tanggal" class="form-control" value="{{ now_date }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Status Publikasi</label>
+                        <select name="status" class="form-select">
+                            <option value="plan">Tahap Plan</option>
+                            <option value="produksi">Tahap Produksi</option>
+                            <option value="editing">Tahap Editing</option>
+                            <option value="publish">Publish</option>
+                            <option value="plan ditolak">Plan Ditolak</option>
+                            <option value="dikembalikan">Dikembalikan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Link Video (YouTube/Lainnya)</label>
+                        <input type="url" name="link_video" class="form-control"
+                            placeholder="Contoh: https://www.youtube.com/watch?v=...">
+                        <small class="text-muted">Opsional. Jika diisi, video akan muncul di halaman detail.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Catatan Revisi / Alasan Ditolak</label>
+                    <textarea name="catatan" class="form-control" rows="2"
+                        placeholder="Berikan catatan jika podcast ditolak atau butuh revisi..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Deskripsi Singkat</label>
+                    <textarea name="deskripsi" class="form-control" rows="2"
+                        placeholder="Ringkasan podcast..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Script Podcast (Ditulis Langsung)</label>
+                    <div class="p-2 bg-light rounded border">
+                        <small class="text-muted d-block mb-2"><i class="fas fa-info-circle me-1"></i> Script ini akan
+                            secara otomatis diubah menjadi file PDF saat disimpan.</small>
+                        <textarea name="script_text" class="form-control" rows="12"
+                            placeholder="Tuliskan seluruh script atau transkrip podcast di sini..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ url_for('admin_podcast') }}" class="btn btn-outline-secondary px-4"><i
+                            class="fas fa-arrow-left me-1"></i> Batal</a>
+                    <button type="submit" class="btn btn-primary px-5 fw-bold">Simpan <i
+                            class="fas fa-save ms-1"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

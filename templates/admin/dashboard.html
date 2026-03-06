@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.4);
+        --primary-accent: #2c3e50;
+    }
+
+    .stat-container {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 15px;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 1200px) {
+        .stat-container {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stat-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .stat-card-premium {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 1.5rem 0.5rem;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 160px;
+    }
+
+    .stat-card-premium:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        border-color: rgba(255, 255, 255, 0.8);
+        background: white;
+    }
+
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        font-size: 1.5rem;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-premium:hover .stat-icon {
+        transform: rotate(10deg);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-count {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+        color: var(--primary-accent);
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #8898aa;
+    }
+
+    /* Vibrant Gradients */
+    .grad-total {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .grad-plan {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .grad-produksi {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .grad-editing {
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    }
+
+    .grad-publish {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    }
+
+    .grad-rejected {
+        background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+    }
+
+    .grad-returned {
+        background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-5 align-items-center">
+    <div class="col-md-12">
+        <h2 class="fw-bold text-dark mb-1">Dashboard Overview</h2>
+        <p class="text-muted">Manajemen konten & alur produksi podcast secara real-time</p>
+        <div
+            style="width: 60px; height: 4px; background: linear-gradient(90deg, #4facfe, #00f2fe); border-radius: 2px;">
+        </div>
+    </div>
+</div>
+
+<!-- Perfect Symmetrical Grid -->
+<div class="stat-container">
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-total"><i class="fas fa-layer-group"></i></div>
+        <div class="stat-count">{{ total_podcast }}</div>
+        <div class="stat-label">Total</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-plan"><i class="fas fa-lightbulb"></i></div>
+        <div class="stat-count">{{ total_plan }}</div>
+        <div class="stat-label">Plan</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-produksi"><i class="fas fa-microphone-slash"></i></div>
+        <div class="stat-count">{{ total_produksi }}</div>
+        <div class="stat-label">Produksi</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-editing"><i class="fas fa-scissors"></i></div>
+        <div class="stat-count">{{ total_editing }}</div>
+        <div class="stat-label">Editing</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-publish"><i class="fas fa-rocket"></i></div>
+        <div class="stat-count">{{ total_publish }}</div>
+        <div class="stat-label">Publish</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-rejected"><i class="fas fa-circle-xmark"></i></div>
+        <div class="stat-count">{{ total_rejected }}</div>
+        <div class="stat-label">Ditolak</div>
+    </div>
+    <div class="stat-card-premium">
+        <div class="stat-icon grad-returned"><i class="fas fa-arrow-rotate-left"></i></div>
+        <div class="stat-count">{{ total_returned }}</div>
+        <div class="stat-label">Balik</div>
+    </div>
+</div>
+
+<!-- Filter & Search -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card glass-card shadow-sm border-0 p-3">
+            <form action="{{ url_for('admin_dashboard') }}" method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i
+                                class="fas fa-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0 ps-0"
+                            placeholder="Cari judul podcast..." value="{{ q }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="plan" {% if current_status=='plan' %}selected{% endif %}>Tahap Plan</option>
+                        <option value="produksi" {% if current_status=='produksi' %}selected{% endif %}>Tahap Produksi
+                        </option>
+                        <option value="editing" {% if current_status=='editing' %}selected{% endif %}>Tahap Editing
+                        </option>
+                        <option value="publish" {% if current_status=='publish' %}selected{% endif %}>Published</option>
+                        <option value="plan ditolak" {% if current_status=='plan ditolak' %}selected{% endif %}>Ditolak
+                        </option>
+                        <option value="dikembalikan" {% if current_status=='dikembalikan' %}selected{% endif %}>
+                            Dikembalikan
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">Terapkan Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Podcasts Table -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card glass-card shadow-sm overflow-hidden">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0"><i class="fas fa-clock-rotate-left me-2 text-primary"></i>Podcast Terbaru</h5>
+                <div class="d-flex gap-2">
+                    <button type="button" onclick="exportData('pdf')" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                    </button>
+                    <a href="{{ url_for('add_podcast') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus me-1"></i>Podcast Baru
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4" style="width: 40px;">
+                                    <input type="checkbox" class="form-check-input" id="checkAll">
+                                </th>
+                                <th>Judul Podcast</th>
+                                <th>Kategori</th>
+                                <th>Tanggal</th>
+                                <th>Status</th>
+                                <th>Catatan</th>
+                                <th class="text-center pe-4">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in podcasts %}
+                            <tr>
+                                <td class="ps-4">
+                                    <input type="checkbox" class="form-check-input podcast-checkbox" value="{{ p.id }}">
+                                </td>
+                                <td>
+                                    <span class="fw-bold">{{ p.judul }}</span>
+                                    <br><small class="text-muted">Narsum: {{ p.narasumber_nama }}</small>
+                                </td>
+                                <td><span class="badge bg-info text-dark">{{ p.kategori }}</span></td>
+                                <td>{{ p.tanggal.strftime('%d %b %Y') }}</td>
+                                <td>
+                                    {% if p.status == 'publish' %}
+                                    <span class="badge bg-success">Published</span>
+                                    {% elif p.status == 'plan' %}
+                                    <span class="badge bg-info text-dark">Plan</span>
+                                    {% elif p.status == 'produksi' %}
+                                    <span class="badge text-white" style="background-color: #6610f2;">Produksi</span>
+                                    {% elif p.status == 'editing' %}
+                                    <span class="badge bg-warning text-dark">Editing</span>
+                                    {% elif p.status == 'plan ditolak' %}
+                                    <span class="badge bg-danger">Ditolak</span>
+                                    {% elif p.status == 'dikembalikan' %}
+                                    <span class="badge bg-secondary">Dikembalikan</span>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if p.catatan %}
+                                    <small class="text-danger"><i class="fas fa-comment-dots"></i> {{ p.catatan
+                                        }}</small>
+                                    {% else %}
+                                    <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('podcast_detail', id=p.id) }}?mode=preview"
+                                            class="btn btn-sm btn-outline-info" title="Lihat Detail"><i
+                                                class="fas fa-eye"></i></a>
+                                        <a href="{{ url_for('edit_podcast', id=p.id) }}"
+                                            class="btn btn-sm btn-outline-primary" title="Edit"><i
+                                                class="fas fa-edit"></i></a>
+                                        <a href="{{ url_for('delete_podcast', id=p.id) }}"
+                                            class="btn btn-sm btn-outline-danger" title="Hapus"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus podcast ini?')"><i
+                                                class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5">Belum ada data podcast.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle Select All
+    document.getElementById('checkAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('.podcast-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    // Handle Export
+    function exportData(type) {
+        const selected = Array.from(document.querySelectorAll('.podcast-checkbox:checked'))
+            .map(cb => cb.value);
+
+        if (selected.length === 0) {
+            alert('Silakan pilih minimal satu podcast untuk diekspor.');
+            return;
+        }
+
+        const ids = selected.join(',');
+        window.location.href = `/admin/podcast/export/${type}?ids=${ids}`;
+    }
+</script>
+{% endblock %}
